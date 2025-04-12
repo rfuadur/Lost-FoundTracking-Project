@@ -1,0 +1,150 @@
+/* Custom Variables */
+:root {
+    --primary-color: #0e6ad3;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --info-color: #0dcaf0;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --light-gray: #f8f9fa;
+    --dark-gray: #343a40;
+}
+
+/* Global Styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Card Enhancements */
+.card {
+    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Button Enhancements */
+.btn {
+    border-radius: 5px;
+    padding: 0.5rem 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+
+/* Form Styling */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Navbar Enhancements */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #0e6ad3 !important; /* Default Bootstrap primary */
+    /* Or use any other color value like: */
+    /* background-color: #28a745 !important; */ /* Green */
+    /* background-color: #dc3545 !important; */ /* Red */
+    /* background-color: #17a2b8 !important; */ /* Cyan */
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+/* Alert Styling */
+.alert {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Footer Enhancement */
+footer {
+    background-color: var(--dark-gray);
+    color: white;
+    padding: 2rem 0;
+    margin-top: auto;
+}
+
+/* Additional Utilities */
+.text-muted { color: var(--secondary-color) !important; }
+.bg-light { background-color: var(--light-gray) !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.text-center { text-align: center !important; }
+
+/* Notification Dropdown Styling */
+.notification-dropdown {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border: none;
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.notification-dropdown .dropdown-header {
+    background-color: var(--light-gray);
+}
+
+.notification-dropdown .dropdown-item:hover {
+    background-color: var(--light-gray);
+}
+
+.notification-dropdown .dropdown-item:active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Container Modifications */
+.container-fluid {
+    max-width: 100%;
+    width: 100%;
+}
+
+/* Card Grid Enhancements */
+.row {
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+}
+
+.col-md-3,
+.col-md-4,
+.col-md-6,
+.col-md-8,
+.col-md-9,
+.col-md-12 {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+}
+
+@media (min-width: 992px) {
+    .container-fluid {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
