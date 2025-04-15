@@ -3,7 +3,7 @@ from app import db
 
 class PostRepository:
     def get_by_type(self, type_name):
-        return Post.query.filter_by(type=type_name).order_by(Post.date.desc()).all()
+        return Post.query.filter_by(type=type_name).order_by(Post.post_date.desc()).all()
         
     def get_by_id(self, post_id):
         return Post.query.get_or_404(post_id)
@@ -26,4 +26,4 @@ class PostRepository:
         return Post.query.filter_by(user_id=user_id).all()
     
     def get_recent(self, limit):
-        return Post.query.order_by(Post.date.desc()).limit(limit).all()
+        return Post.query.order_by(Post.post_date.desc()).limit(limit).all()

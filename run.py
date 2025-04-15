@@ -3,16 +3,6 @@ from app.models.user import User
 from werkzeug.security import generate_password_hash
 
 def create_default_users():
-    if not User.query.filter_by(email="admin@test.com").first():
-        admin = User(
-            name="Admin User",
-            email="admin@test.com",
-            password=generate_password_hash("admin123"),
-            is_admin=True,
-            contact_info="Admin Contact"
-        )
-        db.session.add(admin)
-
     if not User.query.filter_by(email="user@test.com").first():
         user = User(
             name="Test User",
