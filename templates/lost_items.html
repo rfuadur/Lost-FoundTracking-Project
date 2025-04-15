@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Lost Items{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Lost Items</h2>
+        <div>
+            <a href="{{ url_for('posts.report_lost_item') }}" class="btn btn-primary">
+                <i class="fas fa-hand-holding"></i> Report Lost Item
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for item in items %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if item.images %}
+                <img src="{{ url_for('static', filename='uploads/' + item.images.split(',')[0]) }}" class="card-img-top"
+                    alt="Item image" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.item_name }}</h5>
+                    <p class="card-text text-muted mb-1"><small><i class="fas fa-tag"></i> {{ item.category_name|title }}</small></p>
+                    <p class="card-text text-muted">{{ item.description[:100] }}...</p>
+                    <p class="card-text"><small class="text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ item.location }}<br>
+                            <i class="fas fa-calendar"></i> Posted: {{ item.post_date.strftime('%Y-%m-%d') }}<br>
+                            <i class="fas fa-clock"></i> Lost on: {{ item.lOrF_date.strftime('%Y-%m-%d') }}
+                        </small></p>
+                    <a href="{{ url_for('posts.view_post', post_id=item.id) }}" class="btn btn-outline-primary">View
+                        Details</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No lost items posted yet.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

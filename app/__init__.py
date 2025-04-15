@@ -33,16 +33,14 @@ def index():
     return redirect(url_for("dashboard.dashboard"))
 
 # Import controllers after db initialization to avoid circular imports
-#from app.controllers.posts import posts_bp
-
 from app.controllers.auth import auth_bp
 from app.controllers.dashboard import dashboard_bp
+from app.controllers.posts import posts_bp
 
 # Register blueprints
-#app.register_blueprint(posts_bp, url_prefix='/posts')
-
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
+app.register_blueprint(posts_bp, url_prefix='/posts')
 
 # Register error handlers
 from app.utils.error_handlers import register_error_handlers

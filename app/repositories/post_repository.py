@@ -27,3 +27,9 @@ class PostRepository:
     
     def get_recent(self, limit):
         return Post.query.order_by(Post.post_date.desc()).limit(limit).all()
+    
+    def get_by_type_and_user(self, type_name, user_id):
+        return Post.query.filter_by(
+            type=type_name,
+            user_id=user_id
+        ).order_by(Post.post_date.desc()).all()

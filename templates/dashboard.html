@@ -79,22 +79,50 @@
             <div class="row">
                 <div class="col-12">
                     <h3 class="mb-3">Recent Activity</h3>
-                    <div class="card shadow-sm">
-                        <div class="list-group list-group-flush">
-                            {% for activity in recent_activities %}
-                            <a href="{{ url_for('posts.view_post', post_id=activity.id) }}" class="list-group-item list-group-item-action">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <i class="fas fa-{{ 'question' if activity.type == 'lost' else 'check' }}-circle text-{{ 'danger' if activity.type == 'lost' else 'success' }}"></i>
-                                        {{ activity.item_name }} ({{ activity.type|title }})
-                                    </div>
-                                    <small class="text-muted">{{ activity.date.strftime('%Y-%m-%d') }}</small>
+                    <div class="row">
+                        {% for activity in recent_activities %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                {% if activity.images %}
+                                <img src="{{ url_for('static', filename='uploads/' + activity.images.split(',')[0]) }}"
+                                    class="card-img-top" alt="Item image" style="height: 200px; object-fit: cover;">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        {{ activity.item_name }}
+                                        <span
+                                            class="badge {% if activity.type == 'lost' %}bg-danger{% else %}bg-success{% endif %} ms-2">
+                                            {{ activity.type|title }}
+                                        </span>
+                                    </h5>
+                                    <p class="card-text text-muted mb-1">
+                                        <small><i class="fas fa-tag"></i> {{ activity.category_name|title }}</small>
+                                    </p>
+                                    <p class="card-text text-muted">{{ activity.description[:100] }}...</p>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt"></i> {{ activity.location }}<br>
+                                            <i class="fas fa-calendar"></i> Posted: {{
+                                            activity.post_date.strftime('%Y-%m-%d') }}<br>
+                                            <i class="fas fa-clock"></i>
+                                            {% if activity.type == 'lost' %}Lost{% else %}Found{% endif %} on:
+                                            {{ activity.lOrF_date.strftime('%Y-%m-%d') }}
+                                        </small>
+                                    </p>
+                                    <a href="{{ url_for('posts.view_post', post_id=activity.id) }}"
+                                        class="btn btn-outline-{% if activity.type == 'lost' %}primary{% else %}success{% endif %}">
+                                        View Details
+                                    </a>
                                 </div>
-                            </a>
-                            {% else %}
-                            <div class="list-group-item">No recent activity.</div>
-                            {% endfor %}
+                            </div>
                         </div>
+                        {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                No recent activity.
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

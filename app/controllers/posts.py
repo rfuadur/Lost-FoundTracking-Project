@@ -5,6 +5,11 @@ from app.utils.decorators import login_required, user_only
 posts_bp = Blueprint('posts', __name__)
 post_service = PostService()
 
+@posts_bp.route("/lost-items")
+@login_required
+def lost_items():
+    items = post_service.get_all_lost_items()
+    return render_template("lost_items.html", items=items)
 
 @posts_bp.route("/report-lost-item", methods=["GET", "POST"])
 @login_required
