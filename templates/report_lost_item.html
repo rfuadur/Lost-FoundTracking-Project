@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Report Lost Item{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Report Lost Item</h2>
+                    <form method="POST" action="{{ url_for('posts.report_lost_item') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Item Category:</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="">Select a category</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Books">Books</option>
+                                <option value="Clothing">Clothing</option>
+                                <option value="Documents">Documents</option>
+                                <option value="Accessories">Accessories</option>
+                                <option value="Bags">Bags</option>
+                                <option value="Keys">Keys</option>
+                                <option value="Wallets">Wallets</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="item_name" class="form-label">Item Name:</label>
+                            <input type="text" class="form-control" id="item_name" name="item_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description:</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lost_date" class="form-label">Lost Date:</label>
+                            <input type="date" class="form-control" id="lost_date" name="lost_date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="place_lost" class="form-label">Place Lost:</label>
+                            <input type="text" class="form-control" id="place_lost" name="place_lost" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contact_method" class="form-label">Preferred Contact Method:</label>
+                            <select class="form-select" id="contact_method" name="contact_method" required>
+                                <option value="">Select contact method</option>
+                                <option value="Email">Email</option>
+                                <option value="Phone">Phone</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image:</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Submit Report</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
