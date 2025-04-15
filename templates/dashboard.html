@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- User Info Sidebar -->
+        <div class="col-md-3">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
+                    <h5 class="card-title">{{ user.name }}</h5>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-envelope"></i> {{ user.email }}<br>
+                        <i class="fas fa-phone"></i> {{ user.contact_info }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- User Stats Section -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <a href="{{ url_for('posts.user_posts') }}" class="text-decoration-none">
+                        <div class="card shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Your Posts</h5>
+                                <p class="card-text display-6">{{ user_posts_count }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('posts.my_lost_items') }}" class="text-decoration-none">
+                        <div class="card shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Lost Items</h5>
+                                <p class="card-text display-6">{{ lost_items_count }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('posts.my_found_items') }}" class="text-decoration-none">
+                        <div class="card shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Found Items</h5>
+                                <p class="card-text display-6">{{ found_items_count }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Potential Matches Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h3 class="mb-3">Potential Matches</h3>
+                    <div class="row">
+                        {% for post in related_posts %}
+                        <div class="col-md-4 mb-4">
+                            <!-- Potential matches for each posts shown in single list to be navigated further in new template file -->
+                        </div>
+                        {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                No potential matches found.
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Section -->
+            <div class="row">
+                <div class="col-12">
+                    <h3 class="mb-3">Recent Activity</h3>
+                    <div class="card shadow-sm">
+                        <div class="list-group list-group-flush">
+                            {% for activity in recent_activities %}
+                            <a href="{{ url_for('posts.view_post', post_id=activity.id) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-{{ 'question' if activity.type == 'lost' else 'check' }}-circle text-{{ 'danger' if activity.type == 'lost' else 'success' }}"></i>
+                                        {{ activity.item_name }} ({{ activity.type|title }})
+                                    </div>
+                                    <small class="text-muted">{{ activity.date.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                            </a>
+                            {% else %}
+                            <div class="list-group-item">No recent activity.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
