@@ -1,4 +1,4 @@
-# Ignore Python bytecode files
+# Ignore Python bytecode folders
 app/__pycache__
 app/controllers/__pycache__
 app/models/__pycache__
