@@ -12,7 +12,9 @@ class PostService:
 
     def get_all_lost_items(self):
         return self.post_repository.get_by_type("lost")
-
+    def get_all_found_items(self):
+        return self.post_repository.get_by_type("found")
+    
     def get_user_stats(self, user_id):
         user_posts = self.post_repository.get_by_user_id(user_id)
         lost_items = [p for p in user_posts if p.type == "lost"]

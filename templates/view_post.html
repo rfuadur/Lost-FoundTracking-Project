@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.item_name }} - {{ post.type|title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                    <h4 class="mb-0">
+                        <span class="badge {% if post.type == 'lost' %}bg-danger{% else %}bg-success{% endif %} me-2">
+                            {{ post.type|title }}
+                        </span>
+                        {{ post.item_name }}
+                    </h4>
+                    <!--Post Mangement-->
+                    {% if not is_owner and session.user_id %}
+                    <!--Report User Button-->
+                    {% endif %}
+                </div>
+                
+                <div class="card-body">
+                    {% if post.images %}
+                    <div class="mb-4">
+                        <div class="row">
+                            {% for image in post.images.split(',') %}
+                            <div class="col-md-6 mb-3">
+                                <img src="{{ url_for('static', filename='uploads/' + image) }}" 
+                                     class="img-fluid rounded shadow-sm" alt="Item image">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2">Category</h5>
+                        <p class="text-muted">{{ post.category_name|title }}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2">Description</h5>
+                        <p class="text-muted">{{ post.description }}</p>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <h5 class="border-bottom pb-2">Location</h5>
+                            <p class="text-muted"><i class="fas fa-map-marker-alt text-danger"></i> {{ post.location }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="border-bottom pb-2">Posted On</h5>
+                            <p class="text-muted"><i class="fas fa-calendar text-primary"></i> {{ post.post_date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="border-bottom pb-2">{% if post.type == 'lost' %}Lost{% else %}Found{% endif %} On</h5>
+                            <p class="text-muted"><i class="fas fa-clock text-info"></i> {{ post.lOrF_date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2">Contact Information</h5>
+                        <p class="text-muted"><i class="fas fa-user text-info"></i> {{ post_owner.name }}</p>
+                        {% if not is_owner and session.user_id %}
+                            {% if post.contact_method == 'Email' %}
+                                <p class="text-muted"><i class="fas fa-envelope text-secondary"></i> {{ post_owner.email }}</p>
+                            {% elif post.contact_method == 'Phone' or post.contact_method == 'WhatsApp' %}
+                                <p class="text-muted">
+                                    <i class="fas {% if post.contact_method == 'WhatsApp' %}fa-whatsapp{% else %}fa-phone{% endif %} text-success"></i>
+                                    {{ post_owner.contact_info }}
+                                </p>
+                            {% endif %}
+                            <p class="text-muted"><i class="fas fa-comment text-info"></i> Preferred contact method: {{ post.contact_method }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    
+                    <!--Need to add verification features-->
+               
+                </div>
+                
+                <div class="card-footer bg-light">
+                    <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--ADD confirm Delete -->
+{% endblock %}
