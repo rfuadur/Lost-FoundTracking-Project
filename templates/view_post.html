@@ -76,7 +76,45 @@
                     </div>
                     
                     
-                    <!--Need to add verification features-->
+                    {% if is_owner and post.type == 'found' %}
+                    <div class="mb-4">
+                        <a href="{{ url_for('verification.view_claims', post_id=post.id) }}" class="btn btn-info">
+                            <i class="fas fa-clipboard-check"></i> View Verification Claims
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {% if not is_owner and session.user_id and post.type == 'found' and (not verification_claim or verification_claim.status == 'rejected') %}
+                    <div class="mb-4">
+                        <a href="{{ url_for('verification.verify_item', post_id=post.id) }}" class="btn btn-success">
+                            <i class="fas fa-check-circle"></i> Is it yours? Verify Yourself
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% if not is_owner and session.user_id and post.type == 'found' %}
+                    {% if verification_claim %}
+                    <div class="mb-4">
+                        <div class="alert {% if verification_claim.status == 'approved' %}alert-success
+                                        {% elif verification_claim.status == 'rejected' %}alert-danger
+                                        {% else %}alert-warning{% endif %}">
+                            <h5 class="alert-heading">
+                                <i class="fas {% if verification_claim.status == 'approved' %}fa-check-circle
+                                            {% elif verification_claim.status == 'rejected' %}fa-times-circle
+                                            {% else %}fa-clock{% endif %}"></i>
+                                Verification Status: {{ verification_claim.status|title }}
+                            </h5>
+                            {% if verification_claim.status == 'pending' %}
+                                <p class="mb-0">Your verification claim is being reviewed by the item owner.</p>
+                            {% elif verification_claim.status == 'approved' %}
+                                <p class="mb-0">Your claim has been approved! Please contact the owner to retrieve your item.</p>
+                            {% else %}
+                                <p class="mb-0">Your claim has been rejected. If you believe this is a mistake, please contact support.</p>
+                            {% endif %}
+                            <p class="mb-0 mt-2"><small>Submitted on: {{ verification_claim.submission_date.strftime('%Y-%m-%d %H:%M:%S') }}</small></p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
                
                 </div>
                 

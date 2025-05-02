@@ -36,11 +36,14 @@ def index():
 from app.controllers.auth import auth_bp
 from app.controllers.dashboard import dashboard_bp
 from app.controllers.posts import posts_bp
+from app.controllers.verification import verification_bp
 
 # Register blueprints
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
 app.register_blueprint(posts_bp, url_prefix='/posts')
+app.register_blueprint(verification_bp, url_prefix='/verification')
+
 
 # Register error handlers
 from app.utils.error_handlers import register_error_handlers

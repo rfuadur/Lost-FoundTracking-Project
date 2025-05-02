@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
 from app.services.post_service import PostService
 from app.utils.decorators import login_required, user_only
+from app.models.verificationClaim import VerificationClaim
 
 posts_bp = Blueprint('posts', __name__)
 post_service = PostService()
@@ -46,10 +47,15 @@ def report_found_item():
 def view_post(post_id):
     post = post_service.get_by_id(post_id)
     is_owner = session['user_id'] == post.user_id
-    #need to add verificiation details   
+    verification_claim = None
+
+    if not is_owner:
+        verification_claim = VerificationClaim.query.filter_by(
+            post_id=post_id, user_id=session["user_id"]
+        ).first()
     return render_template("view_post.html", 
                          post=post,
-                         post_owner=post.user,is_owner=is_owner)
+                         post_owner=post.user,is_owner=is_owner, verification_claim=verification_claim)
 @posts_bp.route("/user-posts")
 @login_required
 def user_posts():
