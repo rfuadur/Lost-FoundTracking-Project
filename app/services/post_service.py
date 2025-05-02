@@ -83,3 +83,37 @@ class PostService:
             data['images'] = save_image(files['image'])
             
         return self.post_repository.create(data)
+    def update(self, post, form_data=None, files=None):
+        try:
+            if form_data:
+                post.description = form_data.get('description', post.description)
+                post.category_name = form_data.get('category', post.category_name)
+                post.location = form_data.get('location', post.location)
+
+            if files and 'images' in files:
+                new_images = save_images(files)
+                if new_images:
+                    post.images = new_images
+
+            return self.post_repository.update(post)
+        except Exception as e:
+            print(f"Error updating post: {str(e)}")
+            raise
+
+    def delete(self, post):
+        try:
+            # Delete the post's images from storage if they exist
+            if post.images:
+                for image_name in post.images.split(','):
+                    try:
+                        image_path = os.path.join('static', 'uploads', image_name)
+                        if os.path.exists(image_path):
+                            os.remove(image_path)
+                    except Exception as e:
+                        print(f"Error deleting image {image_name}: {str(e)}")
+
+            # Delete the post from database
+            return self.post_repository.delete(post)
+        except Exception as e:
+            print(f"Error deleting post: {str(e)}")
+            raise

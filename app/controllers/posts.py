@@ -73,3 +73,50 @@ def my_lost_items():
 def my_found_items():
     posts = post_service.get_by_type_and_user("found", session['user_id'])
     return render_template("user_posts.html", posts=posts, type="found")
+
+@posts_bp.route("/post/<int:post_id>/edit", methods=["GET", "POST"])
+@login_required
+@user_only
+def edit_post(post_id):
+    post = post_service.get_by_id(post_id)
+    if session.get("user_id") != post.user_id:
+        flash("Access denied", "danger")
+        return redirect(url_for("posts.view_post", post_id=post.id))
+
+    if request.method == "POST":
+        try:
+            post.description = request.form.get("description")
+            post.category_name = request.form.get("category")
+            post.location = request.form.get("location")
+
+            if "images" in request.files:
+                images = []
+                for file in request.files.getlist("images"):
+                    if file.filename:
+                        filename = save_image(file)
+                        if filename:
+                            images.append(filename)
+                if images:
+                    post.images = ",".join(images)
+
+            post_service.update(post)
+            flash("Post updated successfully", "success")
+            return redirect(url_for("posts.view_post", post_id=post.id))
+        except Exception as e:
+            flash(f"Error updating post: {str(e)}", "danger")
+
+    return render_template("edit_post.html", post=post)
+
+
+@posts_bp.route("/post/<int:post_id>/delete", methods=["POST"])
+@login_required
+@user_only
+def delete_post(post_id):
+    post = post_service.get_by_id(post_id)
+    if session.get("user_id") != post.user_id:
+        flash("Access denied", "danger")
+        return redirect(url_for("posts.view_post", post_id=post.id))
+
+    post_service.delete(post)
+    flash("Post deleted successfully", "success")
+    return redirect(url_for("posts.user_posts"))
