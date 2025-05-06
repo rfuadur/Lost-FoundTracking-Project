@@ -1,10 +1,14 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
 from app.services.post_service import PostService
+from app.services.search_service import SearchService
 from app.utils.decorators import login_required, user_only
+from app.utils.image_utils import save_image
 from app.models.verificationClaim import VerificationClaim
 
 posts_bp = Blueprint('posts', __name__)
 post_service = PostService()
+search_service = SearchService()
+
 
 @posts_bp.route("/lost-items")
 @login_required
@@ -53,9 +57,11 @@ def view_post(post_id):
         verification_claim = VerificationClaim.query.filter_by(
             post_id=post_id, user_id=session["user_id"]
         ).first()
-    return render_template("view_post.html", 
+    return render_template("view_post.html",
                          post=post,
                          post_owner=post.user,is_owner=is_owner, verification_claim=verification_claim)
+
+
 @posts_bp.route("/user-posts")
 @login_required
 def user_posts():
@@ -120,3 +126,20 @@ def delete_post(post_id):
     post_service.delete(post)
     flash("Post deleted successfully", "success")
     return redirect(url_for("posts.user_posts"))
+
+
+@posts_bp.route("/search")
+@login_required
+def search():
+    query = request.args.get('q', '').strip()  # Added strip() to remove whitespace
+    post_type = request.args.get('type')
+
+    if not query:
+        flash("Please enter a keyword to search", "warning")
+        return redirect(request.referrer or url_for('dashboard.dashboard'))
+
+    results = search_service.search_posts(query, post_type)
+    return render_template('search_results.html',
+                         query=query,
+                         results=results,
+                         type=post_type)

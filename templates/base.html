@@ -47,6 +47,20 @@
                         </a>
                     </li>
                 </ul>
+                <form class="d-flex mx-3" action="{{ url_for('posts.search') }}" method="GET">
+                    <div class="input-group">
+                        <input class="form-control" type="search" name="q" placeholder="Search items..." aria-label="Search"
+                            value="{{ request.args.get('q', '') }}">
+                        <select class="form-select" name="type" style="max-width: 120px;">
+                            <option value="">All Items</option>
+                            <option value="lost" {% if request.args.get('type') == 'lost' %}selected{% endif %}>Lost Items</option>
+                            <option value="found" {% if request.args.get('type') == 'found' %}selected{% endif %}>Found Items</option>
+                        </select>
+                        <button class="btn btn-outline-light" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">

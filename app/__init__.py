@@ -1,5 +1,6 @@
 from flask import Flask, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from datetime import datetime
 import os
 
@@ -11,6 +12,7 @@ app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, '..', 'static', 'uploa
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Ensure uploads directory exists
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
@@ -37,13 +39,14 @@ from app.controllers.auth import auth_bp
 from app.controllers.dashboard import dashboard_bp
 from app.controllers.posts import posts_bp
 from app.controllers.verification import verification_bp
+# from app.controllers.admin import admin_bp
 
 # Register blueprints
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
 app.register_blueprint(posts_bp, url_prefix='/posts')
 app.register_blueprint(verification_bp, url_prefix='/verification')
-
+# app.register_blueprint(admin_bp, url_prefix='/admin')
 
 # Register error handlers
 from app.utils.error_handlers import register_error_handlers

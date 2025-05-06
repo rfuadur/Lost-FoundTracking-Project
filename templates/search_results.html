@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Filter Sidebar -->
+        <div class="col-md-3">
+            <div class="card shadow-sm position-sticky" style="top: 1rem;">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Filter Results</h5>
+                </div>
+                <div class="card-body">
+                    <form id="filterForm" method="GET" action="{{ url_for('posts.search') }}">
+                        <input type="hidden" name="q" value="{{ query }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Item Type</label>
+                            <select name="type" class="form-select">
+                                <option value="">All Types</option>
+                                <option value="lost" {% if type == 'lost' %}selected{% endif %}>Lost Items</option>
+                                <option value="found" {% if type == 'found' %}selected{% endif %}>Found Items</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select">
+                                <option value="">All Categories</option>
+                                <option value="Electronics" {% if category == 'Electronics' %}selected{% endif %}>Electronics</option>
+                                <option value="Books" {% if category == 'Books' %}selected{% endif %}>Books</option>
+                                <option value="Clothing" {% if category == 'Clothing' %}selected{% endif %}>Clothing</option>
+                                <option value="Documents" {% if category == 'Documents' %}selected{% endif %}>Documents</option>
+                                <option value="Accessories" {% if category == 'Accessories' %}selected{% endif %}>Accessories</option>
+                                <option value="Bags" {% if category == 'Bags' %}selected{% endif %}>Bags</option>
+                                <option value="Keys" {% if category == 'Keys' %}selected{% endif %}>Keys</option>
+                                <option value="Wallets" {% if category == 'Wallets' %}selected{% endif %}>Wallets</option>            
+                                <option value="Others" {% if category == 'Others' %}selected{% endif %}>Others</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Date Range</label>
+                            <input type="date" name="date_from" class="form-control mb-2" value="{{ date_from }}" placeholder="From">
+                            <input type="date" name="date_to" class="form-control" value="{{ date_to }}" placeholder="To">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" 
+                                   name="location" 
+                                   class="form-control" 
+                                   value="{{ location if location else '' }}" 
+                                   placeholder="Enter location">
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <a href="{{ url_for('posts.search', q=query) }}" class="btn btn-outline-secondary mt-2">Clear Filters</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Search Results for "{{ query }}"</h2>
+                <div>
+                    <span class="badge bg-primary">{{ results|length }} items found</span>
+                    {% if type %}
+                        <span class="badge bg-info">Type: {{ type|title }}</span>
+                    {% endif %}
+                    {% if category %}
+                        <span class="badge bg-info">Category: {{ category }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                {% if results %}
+                    {% for post in results %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            {% if post.images %}
+                            <img src="{{ url_for('static', filename='uploads/' + post.images.split(',')[0]) }}" 
+                                 class="card-img-top" alt="Item image" style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ post.item_name }}</h5>
+                                <p class="card-text text-muted mb-1">
+                                    <small>
+                                        <i class="fas fa-tag"></i> {{ post.category_name|title }}
+                                        <span class="badge {% if post.type == 'lost' %}bg-danger{% else %}bg-success{% endif %} ms-2">
+                                            {{ post.type|title }}
+                                        </span>
+                                    </small>
+                                </p>
+                                <p class="card-text text-muted">{{ post.description[:100] }}...</p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt"></i> {{ post.location }}<br>
+                                        <i class="fas fa-calendar"></i> Posted: {{ post.post_date.strftime('%Y-%m-%d') }}<br>
+                                        <i class="fas fa-clock"></i> 
+                                        {% if post.type == 'lost' %}Lost{% else %}Found{% endif %} on: 
+                                        {{ post.lOrF_date.strftime('%Y-%m-%d') }}
+                                    </small>
+                                </p>
+                                <a href="{{ url_for('posts.view_post', post_id=post.id) }}" 
+                                   class="btn btn-outline-{% if post.type == 'lost' %}danger{% else %}success{% endif %}">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            No results found for your search. Try different keywords or remove filters.
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

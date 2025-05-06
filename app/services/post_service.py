@@ -7,25 +7,24 @@ from app.utils.image_utils import save_image, save_images
 class PostService:
     def __init__(self):
         self.post_repository = PostRepository()
-        # Use Asia/Riyadh timezone (or your local timezone)
         self.local_tz = pytz.timezone('Asia/Riyadh')
 
     def get_all_lost_items(self):
         return self.post_repository.get_by_type("lost")
     def get_all_found_items(self):
         return self.post_repository.get_by_type("found")
-    
+
     def get_user_stats(self, user_id):
         user_posts = self.post_repository.get_by_user_id(user_id)
         lost_items = [p for p in user_posts if p.type == "lost"]
         found_items = [p for p in user_posts if p.type == "found"]
-        
+
         return {
             'total_posts': len(user_posts),
             'lost_items': len(lost_items),
             'found_items': len(found_items)
         }
-    
+
     def get_recent_activities(self, limit=5):
         return self.post_repository.get_recent(limit)
 
@@ -37,13 +36,13 @@ class PostService:
 
     def get_by_user_id(self, user_id):
         return self.post_repository.get_by_user_id(user_id)
-    
+
     def create_lost_item(self, form_data, files, user_id):
         lost_date = datetime.strptime(form_data.get('lost_date'), '%Y-%m-%d')
         # Localize the dates
         lost_date = self.local_tz.localize(lost_date)
         post_date = datetime.now(self.local_tz)
-        
+
         data = {
             'category_name': form_data.get('category'),
             'item_name': form_data.get('item_name'),
@@ -55,10 +54,10 @@ class PostService:
             'type': 'lost',
             'user_id': user_id
         }
-        
+
         if 'image' in files:
             data['images'] = save_image(files['image'])
-            
+
         return self.post_repository.create(data)
 
     def create_found_item(self, form_data, files, user_id):
@@ -66,7 +65,7 @@ class PostService:
         # Localize the dates
         found_date = self.local_tz.localize(found_date)
         post_date = datetime.now(self.local_tz)
-        
+
         data = {
             'category_name': form_data.get('category'),
             'item_name': form_data.get('item_name'),
@@ -78,10 +77,10 @@ class PostService:
             'type': 'found',
             'user_id': user_id
         }
-        
+
         if 'image' in files:
             data['images'] = save_image(files['image'])
-            
+
         return self.post_repository.create(data)
     def update(self, post, form_data=None, files=None):
         try:
