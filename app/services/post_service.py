@@ -3,14 +3,17 @@ import os
 import pytz
 from app.repositories.post_repository import PostRepository
 from app.utils.image_utils import save_image, save_images
+from app.services.matching_service import MatchingService
 
 class PostService:
     def __init__(self):
         self.post_repository = PostRepository()
-        self.local_tz = pytz.timezone('Asia/Riyadh')
+        self.matching_service = MatchingService()
+        self.local_tz = pytz.timezone('Asia/Dhaka') # Set Asia/Dhaka timezone
 
     def get_all_lost_items(self):
         return self.post_repository.get_by_type("lost")
+
     def get_all_found_items(self):
         return self.post_repository.get_by_type("found")
 
@@ -25,9 +28,6 @@ class PostService:
             'found_items': len(found_items)
         }
 
-    def get_recent_activities(self, limit=5):
-        return self.post_repository.get_recent(limit)
-
     def get_by_type_and_user(self, type_name, user_id):
         return self.post_repository.get_by_type_and_user(type_name, user_id)
 
@@ -39,7 +39,6 @@ class PostService:
 
     def create_lost_item(self, form_data, files, user_id):
         lost_date = datetime.strptime(form_data.get('lost_date'), '%Y-%m-%d')
-        # Localize the dates
         lost_date = self.local_tz.localize(lost_date)
         post_date = datetime.now(self.local_tz)
 
@@ -62,7 +61,6 @@ class PostService:
 
     def create_found_item(self, form_data, files, user_id):
         found_date = datetime.strptime(form_data.get('found_date'), '%Y-%m-%d')
-        # Localize the dates
         found_date = self.local_tz.localize(found_date)
         post_date = datetime.now(self.local_tz)
 

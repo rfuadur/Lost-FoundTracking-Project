@@ -28,7 +28,7 @@
                     <p class="card-text"><small class="text-muted">
                             <i class="fas fa-map-marker-alt"></i> {{ item.location }}<br>
                             <i class="fas fa-calendar"></i> Posted: {{ item.post_date.strftime('%Y-%m-%d') }}<br>
-                            <i class="fas fa-clock"></i> Lost on: {{ item.lOrF_date.strftime('%Y-%m-%d') }}
+                            <i class="fas fa-clock"></i> Found on: {{ item.lOrF_date.strftime('%Y-%m-%d') }}
                         </small></p>
                     <a href="{{ url_for('posts.view_post', post_id=item.id) }}" class="btn btn-outline-success">View
                         Details</a>

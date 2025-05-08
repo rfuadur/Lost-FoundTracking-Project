@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Notifications</h4>
+                    <div>
+                        {% if notifications %}
+                        <a href="{{ url_for('dashboard.mark_all_notifications_read') }}" class="btn btn-outline-primary btn-sm me-2">
+                            <i class="fas fa-check-double"></i> Mark All Read
+                        </a>
+                        <a href="{{ url_for('dashboard.clear_notifications') }}" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-trash"></i> Clear All
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if notifications %}
+                    <div class="list-group">
+                        {% for notification in notifications %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center {% if not notification.is_read %}bg-light{% endif %}">
+                            <a href="{{ url_for('dashboard.mark_notification_read', notification_id=notification.id) }}"
+                               class="text-decoration-none flex-grow-1 text-dark">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1 {% if not notification.is_read %}fw-bold{% endif %}">{{ notification.title }}</h6>
+                                    <small class="text-muted">{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                </div>
+                                <p class="mb-1">{{ notification.message }}</p>
+                            </a>
+                            <a href="{{ url_for('dashboard.delete_notification', notification_id=notification.id) }}"
+                               class="btn btn-outline-danger btn-sm ms-3"
+                               onclick="return confirm('Are you sure you want to delete this notification?')">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted mb-0">No notifications</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

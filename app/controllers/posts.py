@@ -1,13 +1,14 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
 from app.services.post_service import PostService
 from app.services.search_service import SearchService
+from app.services.verification_service import VerificationService
 from app.utils.decorators import login_required, user_only
-from app.models.verificationClaim import VerificationClaim  # Fixed import path
-from app.utils.image_utils import save_image  # Import save_image utility
+from app.utils.image_utils import save_image
 
 posts_bp = Blueprint("posts", __name__)
 post_service = PostService()
 search_service = SearchService()
+verification_service = VerificationService()
 
 
 @posts_bp.route("/lost-items")
@@ -62,9 +63,9 @@ def view_post(post_id):
     verification_claim = None
 
     if not is_owner:
-        verification_claim = VerificationClaim.query.filter_by(
-            post_id=post_id, user_id=session["user_id"]
-        ).first()
+        verification_claim = verification_service.get_user_post_claim(
+            post_id, session["user_id"]
+        )
 
     return render_template(
         "view_post.html",
@@ -145,10 +146,10 @@ def delete_post(post_id):
 
 
 @posts_bp.route("/search")
-@login_required 
+@login_required
 def search():
     query = request.args.get('q', '').strip()
-    
+
     # Collect all filters and clean them
     filters = {
         'type': request.args.get('type', '').strip(),
@@ -157,26 +158,28 @@ def search():
         'date_from': request.args.get('date_from', '').strip(),
         'date_to': request.args.get('date_to', '').strip()
     }
-    
+
     # Check if we have any search criteria
     has_search = query or any(filters.values())
     if not has_search:
         flash("Please enter a keyword or select filters to search", "warning")
-        return redirect(request.referrer or url_for('dashboard.dashboard'))
-    
+        return redirect(request.referrer or url_for("dashboard.dashboard"))
+
     # Remove empty filters
     filters = {k: v for k, v in filters.items() if v}
-    
+
     # For debugging
     print("Search query:", query)
     print("Applied filters:", filters)
-    
+
     results = search_service.search_posts(query, filters)
-    return render_template('search_results.html', 
-                         query=query,
-                         results=results,
-                         type=filters.get('type', ''),
-                         category=filters.get('category', ''),
-                         location=filters.get('location', ''),
-                         date_from=filters.get('date_from', ''),
-                         date_to=filters.get('date_to', ''))
+    return render_template(
+        'search_results.html',
+        query=query,
+        results=results,
+        type=filters.get('type', ''),
+        category=filters.get('category', ''),
+        location=filters.get('location', ''),
+        date_from=filters.get('date_from', ''),
+        date_to=filters.get('date_to', ''),
+    )

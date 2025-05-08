@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - {{ post.item_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0">
+                            <span class="badge {% if post.type == 'lost' %}bg-danger{% else %}bg-success{% endif %} me-2">
+                                {{ post.type|title }}
+                            </span>
+                            {{ post.item_name }}
+                        </h5>
+                        <small class="text-muted">Chatting with {{ other_user.name }}</small>
+                    </div>
+                    <a href="{{ url_for('chat.inbox') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Back to Messages
+                    </a>
+                </div>
+
+                <div class="card-body chat-container" style="height: 400px; overflow-y: auto;" id="chatMessages">
+                    {% for chat in chats %}
+                    <div class="mb-3 {% if chat.sender_id == session.user_id %}text-end{% endif %}">
+                        <div class="d-inline-block p-2 rounded {% if chat.sender_id == session.user_id %}bg-primary text-white{% else %}bg-light{% endif %}" style="max-width: 70%;">
+                            <div class="message-text">{{ chat.message }}</div>
+                            <small class="{% if chat.sender_id == session.user_id %}text-white-50{% else %}text-muted{% endif %}">
+                                {{ chat.created_at.strftime('%H:%M') }}
+                            </small>
+                            {% if chat.sender_id != session['user_id'] %}
+                            <button class="btn btn-sm btn-link text-warning"
+                                    onclick='showReportModal("chat", "{{ chat.sender_id }}", "{{ chat.id }}")'>
+                                <i class="fas fa-flag"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="card-footer">
+                    <form id="messageForm" class="d-flex">
+                        <input type="text" id="messageInput" class="form-control me-2" placeholder="Type your message..." required>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize variables
+    const socket = io();
+    const chatContainer = document.getElementById('chatMessages');
+    const messageForm = document.getElementById('messageForm');
+    const messageInput = document.getElementById('messageInput');
+
+    // Convert Python variables to JavaScript
+    const currentUserId = Number('{{ session.user_id }}');
+    const postId = Number('{{ post.id }}');
+    const otherUserId = Number('{{ other_user.id }}');
+
+    function scrollToBottom() {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function createMessageElement(data, isOutgoing) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('mb-3');
+        if (isOutgoing) {
+            messageDiv.classList.add('text-end');
+        }
+
+        messageDiv.innerHTML = `
+            <div class="d-inline-block p-2 rounded ${isOutgoing ? 'bg-primary text-white' : 'bg-light'}"
+                 style="max-width: 70%;">
+                <div class="message-text"></div>
+                <small class="${isOutgoing ? 'text-white-50' : 'text-muted'}"></small>
+            </div>
+        `;
+
+        messageDiv.querySelector('.message-text').textContent = data.message;
+        messageDiv.querySelector('small').textContent = data.created_at;
+
+        return messageDiv;
+    }
+
+    // Socket event handlers
+    socket.on('connect', function() {
+        // Join room specific to this post
+        socket.emit('join', {
+            post_id: postId,
+            room: `post_${postId}`
+        });
+        // Mark messages as read
+        socket.emit('mark_read', {
+            post_id: postId,
+            room: `post_${postId}`
+        });
+    });
+
+    // Update messages_read handler
+    socket.on('messages_read', function(data) {
+        if (data.post_id === postId) {
+            updateUnreadCount();
+        }
+    });
+
+    function updateUnreadCount() {
+        // Update navbar badge
+        const navBadge = document.querySelector('#chat-nav-badge');
+        if (navBadge) {
+            const currentCount = parseInt(navBadge.textContent || '0');
+            if (currentCount > 0) {
+                const newCount = currentCount - 1;
+                if (newCount <= 0) {
+                    navBadge.style.display = 'none';
+                } else {
+                    navBadge.textContent = newCount;
+                }
+            }
+        }
+
+        // Update any page-specific unread indicators
+        document.querySelectorAll('.unread-badge').forEach(badge => {
+            badge.style.display = 'none';
+        });
+    }
+
+    socket.on('message', function(data) {
+        const isOutgoing = Number(data.sender_id) === currentUserId;
+        const messageElement = createMessageElement(data, isOutgoing);
+        chatContainer.appendChild(messageElement);
+        scrollToBottom();
+    });
+
+    // Form submission
+    messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const message = messageInput.value.trim();
+        if (!message) {
+            return;
+        }
+
+        socket.emit('message', {
+            post_id: postId,
+            receiver_id: otherUserId,
+            message: message
+        });
+
+        messageInput.value = '';
+    });
+
+    // Initial scroll to bottom
+    scrollToBottom();
+});
+</script>
+{% endblock %}

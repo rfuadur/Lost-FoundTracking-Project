@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}All Verification Claims{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">All Verification Claims</h2>
+    {% if claims %}
+        {% for claim in claims %}
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="card-title mb-1">{{ claim.post.item_name }}</h5>
+                        <p class="text-muted mb-1">
+                            <small>
+                                <i class="fas fa-tag"></i> {{ claim.post.category_name|title }}
+                                <span class="badge {% if claim.post.type == 'lost' %}bg-danger{% else %}bg-success{% endif %} ms-2">
+                                    {{ claim.post.type|title }}
+                                </span>
+                            </small>
+                        </p>
+                        <p class="mb-1">
+                            <strong>Claimed by:</strong> {{ claim.user.name }}
+                            <span class="badge {% if claim.claim.status == 'pending' %}bg-warning
+                                          {% elif claim.claim.status == 'approved' %}bg-success
+                                          {% else %}bg-danger{% endif %} ms-2">
+                                {{ claim.claim.status|title }}
+                            </span>
+                        </p>
+                        <p class="text-muted mb-0">
+                            <small>
+                                <i class="fas fa-calendar"></i> Submitted: {{ claim.claim.submission_date.strftime('%Y-%m-%d') }}
+                            </small>
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <a href="{{ url_for('posts.view_post', post_id=claim.post.id) }}" class="btn btn-outline-primary btn-sm me-2">
+                            <i class="fas fa-eye"></i> View Post
+                        </a>
+                        <a href="{{ url_for('verification.view_claims', post_id=claim.post.id) }}" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-clipboard-check"></i> View Claims
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            No verification claims found.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -57,7 +57,7 @@ main {
 /* Navbar Enhancements */
 .navbar {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    background-color: #0e6ad3 !important; /* Default Bootstrap primary */
+    background-color: #404247 !important;
     /* Or use any other color value like: */
     /* background-color: #28a745 !important; */ /* Green */
     /* background-color: #dc3545 !important; */ /* Red */
@@ -101,10 +101,44 @@ footer {
 
 /* Notification Dropdown Styling */
 .notification-dropdown {
+    width: 400px;
+    max-height: 600px;
+    padding: 0;
+    margin-top: 0.5rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     border: none;
     border-radius: 0.5rem;
-    margin-top: 0.5rem;
+}
+
+.notification-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-content {
+    padding: 0.75rem 1rem;
+    word-wrap: break-word;
+}
+
+.notification-text {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.notification-link {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s ease;
+}
+
+.notification-link:hover {
+    background-color: var(--light-gray);
+}
+
+.notification-link:last-child {
+    border-bottom: none;
 }
 
 .notification-dropdown .dropdown-header {

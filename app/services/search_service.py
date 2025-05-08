@@ -1,5 +1,4 @@
 from app.repositories.post_repository import PostRepository
-from datetime import datetime
 
 class SearchService:
     def __init__(self):
@@ -8,7 +7,7 @@ class SearchService:
     def search_posts(self, query, filters=None):
         """
         Search posts based on keyword and filters
-        
+
         Args:
             query (str): Search keyword
             filters (dict): Optional filters containing:

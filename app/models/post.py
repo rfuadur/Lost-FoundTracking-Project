@@ -1,6 +1,5 @@
 from app import db
 from datetime import datetime
-from app.models.verificationClaim import VerificationClaim
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,3 +18,6 @@ class Post(db.Model):
     item_name = db.Column(db.String(100))
     contact_method = db.Column(db.String(50))
     verification_claims = db.relationship("VerificationClaim", backref="post", lazy=True)
+
+    # Relationship with backref and cascade
+    chats = db.relationship('Chat', backref=db.backref('chat_post', lazy=True), cascade='all, delete-orphan')

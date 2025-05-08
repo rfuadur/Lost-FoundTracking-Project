@@ -17,7 +17,7 @@ class User(db.Model):
         lazy=True,
     )
     reports_against = db.relationship(
-        "UserReport", 
+        "UserReport",
         foreign_keys=[UserReport.reported_user_id],
         backref="reported_user",
         lazy=True,

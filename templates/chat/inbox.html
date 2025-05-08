@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">My Conversations</h4>
+                </div>
+                <div class="card-body">
+                    {% if owned_posts %}
+                    <h5 class="border-bottom pb-2 mb-3">Your Posts</h5>
+                    <div class="list-group mb-4">
+                        {% for post in owned_posts %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <a href="{{ url_for('chat.conversation', post_id=post.id) }}"
+                                   class="d-flex justify-content-between align-items-center text-decoration-none">
+                                    <div>
+                                        <span class="badge {% if post.type == 'lost' %}bg-danger{% else %}bg-success{% endif %} me-2">
+                                            {{ post.type|title }}
+                                        </span>
+                                        <h6 class="d-inline mb-1">{{ post.item_name }}</h6>
+                                    </div>
+                                    {% set unread = post.chats|selectattr('receiver_id', 'equalto', session.user_id)|selectattr('is_read', 'equalto', false)|list|length %}
+                                    {% if unread > 0 %}
+                                    <span class="badge bg-primary rounded-pill">{{ unread }}</span>
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <a href="{{ url_for('posts.view_post', post_id=post.id) }}" class="btn btn-outline-secondary btn-sm ms-2">
+                                <i class="fas fa-eye"></i> View Post
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if other_posts %}
+                    <h5 class="border-bottom pb-2 mb-3">Other Posts</h5>
+                    <div class="list-group">
+                        {% for post in other_posts %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <a href="{{ url_for('chat.conversation', post_id=post.id) }}"
+                                   class="d-flex justify-content-between align-items-center text-decoration-none">
+                                    <div>
+                                        <span class="badge {% if post.type == 'lost' %}bg-danger{% else %}bg-success{% endif %} me-2">
+                                            {{ post.type|title }}
+                                        </span>
+                                        <h6 class="d-inline mb-1">{{ post.item_name }}</h6>
+                                        <small class="text-muted d-block">Posted by: {{ post.user.name }}</small>
+                                    </div>
+                                    {% set unread = post.chats|selectattr('receiver_id', 'equalto', session.user_id)|selectattr('is_read', 'equalto', false)|list|length %}
+                                    {% if unread > 0 %}
+                                    <span class="badge bg-primary rounded-pill">{{ unread }}</span>
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <a href="{{ url_for('posts.view_post', post_id=post.id) }}" class="btn btn-outline-secondary btn-sm ms-2">
+                                <i class="fas fa-eye"></i> View Post
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if not owned_posts and not other_posts %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">No conversations yet.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
