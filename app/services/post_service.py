@@ -58,7 +58,9 @@ class PostService:
         if 'image' in files:
             data['images'] = save_image(files['image'])
 
-        return self.post_repository.create(data)
+        post = self.post_repository.create(data)
+        self.process_matches(post)
+        return post
 
     def create_found_item(self, form_data, files, user_id):
         found_date = datetime.strptime(form_data.get('found_date'), '%Y-%m-%d')
@@ -80,7 +82,10 @@ class PostService:
         if 'image' in files:
             data['images'] = save_image(files['image'])
 
-        return self.post_repository.create(data)
+        post = self.post_repository.create(data)
+        self.process_matches(post)
+        return post
+
     def update(self, post, form_data=None, files=None):
         try:
             if form_data:
@@ -115,6 +120,7 @@ class PostService:
         except Exception as e:
             print(f"Error deleting post: {str(e)}")
             raise
+
     def process_matches(self, post):
         """Find and notify users about potential matches"""
         try:

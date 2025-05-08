@@ -1,6 +1,4 @@
-import random
 from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
 from app.models.post import Post
 from app.models.notification import Notification
 from app import db
@@ -47,7 +45,7 @@ class MatchingService:
                 include=['embeddings']
             )
 
-            print("Cached results:", cached_results)
+            # print("Cached results:", cached_results)
 
             # Properly check if we have valid cached embeddings
             if (isinstance(cached_results["ids"], list) and len(cached_results["ids"]) > 0):
@@ -83,7 +81,6 @@ class MatchingService:
     def compute_text_similarity(self, text1, text2):
         if not text1 or not text2 or not self.embedding_model:
             return 0
-        print("I am in compute_text_similarity")  # Debug log
 
         try:
             # Generate embeddings using Google's Generative AI
@@ -105,7 +102,6 @@ class MatchingService:
             return 0
 
     def find_matches(self, post, threshold=0.5):  # Lower threshold for better matches
-        print("I am in find_matches")  # Debug log
         try:
             matches = []
             opposite_type = "found" if post.type == "lost" else "lost"
@@ -121,7 +117,7 @@ class MatchingService:
                                 f"{candidate.category_name} {candidate.location}")
 
                 # Calculate similarity score
-                print("I am calling compute_text_similarity")  # Debug log
+                print("Calling compute_text_similarity")  # Debug log
                 score = self.compute_text_similarity(post_text, candidate_text)
                 print("Score:", score)  # Debug log
 
