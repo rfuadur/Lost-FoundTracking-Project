@@ -1,8 +1,10 @@
 from datetime import datetime
 import os
 import pytz
+import logging
 from app.repositories.post_repository import PostRepository
 from app.utils.image_utils import save_image, save_images
+from app.services.matching_service import MatchingService
 
 class PostService:
     def __init__(self):
@@ -116,3 +118,38 @@ class PostService:
         except Exception as e:
             print(f"Error deleting post: {str(e)}")
             raise
+    def process_matches(self, post):
+        """Find and notify users about potential matches"""
+        try:
+            print(f"Processing matches for post {post.id}")  # Debug log
+            matches = self.matching_service.find_matches(post)
+            print(f"Matches found: {matches}")  # Debug log
+
+            if matches:
+                print(f"Found {len(matches)} potential matches")  # Debug log
+
+                # Get top 3 matches and notify users
+                for match in matches[:3]:
+                    print(f"Creating notifications for match with score {match['score']}")  # Debug log
+
+                    # Notify the original post owner
+                    self.matching_service.create_match_notification(
+                        post.user_id,
+                        match['post'],
+                        post,
+                        match['score']
+                    )
+
+                    # Notify the matching post owner
+                    self.matching_service.create_match_notification(
+                        match['post'].user_id,
+                        post,
+                        match['post'],
+                        match['score']
+                    )
+            else:
+                print("No matches found")  # Debug log
+
+        except Exception as e:
+            print(f"Error processing matches: {e}")
+            logging.error(f"Error processing matches: {e}")
