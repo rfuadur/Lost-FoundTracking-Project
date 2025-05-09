@@ -9,6 +9,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     is_banned = db.Column(db.Boolean, default=False)
     contact_info = db.Column(db.String(200))
+    contribution = db.Column(db.Integer, default=0)
     posts = db.relationship("Post", backref="user", lazy=True)
     reported_by = db.relationship(
         "UserReport",

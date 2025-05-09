@@ -22,7 +22,7 @@ def dashboard():
     stats = post_service.get_user_stats(session['user_id'])
     recent_activities = dashboard_service.get_recent_activities()
     pending_claims_count = notification_service.get_pending_claims_count(session['user_id'])
-
+    top_contributors = dashboard_service.get_top_contributors()
     return render_template(
         "dashboard.html",
         user=current_user,
@@ -31,6 +31,7 @@ def dashboard():
         found_items_count=stats["found_items"],
         recent_activities=recent_activities,
         pending_claims_count=pending_claims_count,
+        top_contributors=top_contributors,
     )
 
 

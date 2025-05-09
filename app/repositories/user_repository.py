@@ -27,3 +27,9 @@ class UserRepository:
     def update(user):
         db.session.commit()
         return user
+
+    def get_top_contributors(self, limit):
+        return db.session.query(User)\
+        .filter(User.contribution > 0)\
+        .order_by(User.contribution.desc())\
+        .limit(5).all()
