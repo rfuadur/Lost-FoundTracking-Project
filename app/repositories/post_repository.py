@@ -55,28 +55,28 @@ class PostRepository:
         )
 
         if filters:
-            if filters.get('type'):
-                base_query = base_query.filter(Post.type == filters['type'])
+            if filters.get("type"):
+                base_query = base_query.filter(Post.type == filters["type"])
 
-            if filters.get('category'):
+            if filters.get("category"):
                 base_query = base_query.filter(
-                    Post.category_name == filters['category']
+                    Post.category_name == filters["category"]
                 )
 
-            if filters.get('location'):
+            if filters.get("location"):
                 location_search = f"%{filters['location']}%"
                 base_query = base_query.filter(Post.location.ilike(location_search))
 
-            if filters.get('date_from'):
+            if filters.get("date_from"):
                 try:
-                    date_from = datetime.strptime(filters['date_from'], "%Y-%m-%d")
+                    date_from = datetime.strptime(filters["date_from"], "%Y-%m-%d")
                     base_query = base_query.filter(Post.lOrF_date >= date_from)
                 except ValueError:
                     pass
 
-            if filters.get('date_to'):
+            if filters.get("date_to"):
                 try:
-                    date_to = datetime.strptime(filters['date_to'], "%Y-%m-%d")
+                    date_to = datetime.strptime(filters["date_to"], "%Y-%m-%d")
                     base_query = base_query.filter(Post.lOrF_date <= date_to)
                 except ValueError:
                     pass
@@ -94,3 +94,19 @@ class PostRepository:
 
     def count_all(self):
         return Post.query.count()
+
+    def update_status(self, post_id, new_status):
+        post = self.get_by_id(post_id)
+        if post:
+            post.status = new_status
+            db.session.commit()
+            return True
+        return False
+
+    def delete_by_id(self, post_id):
+        post = self.get_by_id(post_id)
+        if post:
+            db.session.delete(post)
+            db.session.commit()
+            return True
+        return False

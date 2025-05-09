@@ -17,6 +17,7 @@ class DashboardService:
 
     def get_recent_activities(self, limit=6):
         return self.post_repository.get_recent(limit)
+    
     def get_top_contributors(self, limit=5):
         return self.user_repository.get_top_contributors(limit)
     

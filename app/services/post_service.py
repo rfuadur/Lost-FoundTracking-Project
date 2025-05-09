@@ -156,3 +156,6 @@ class PostService:
         except Exception as e:
             print(f"Error processing matches: {e}")
             logging.error(f"Error processing matches: {e}")
+
+    def search_posts(self, query, filters=None):
+        return self.post_repository.search(query, filters)
