@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Manage User Posts{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">User Posts Management</h2>
+        <span class="badge bg-primary fs-6">{{ posts|length }} Posts</span>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-select">
+                        <option value="">All</option>
+                        <option value="Electronics" {% if filters.category == 'Electronics' %}selected{% endif %}>Electronics</option>
+                        <option value="Books" {% if filters.category == 'Books' %}selected{% endif %}>Books</option>
+                        <option value="Documents" {% if filters.category == 'Documents' %}selected{% endif %}>Documents</option>
+                        <option value="Clothing" {% if filters.category == 'Clothing' %}selected{% endif %}>Clothing</option>
+                        <option value="Accessories" {% if filters.category == 'Accessories' %}selected{% endif %}>Accessories</option>
+                        <option value="Bags" {% if filters.category == 'Bags' %}selected{% endif %}>Bags</option>
+                        <option value="Keys" {% if filters.category == 'Keys' %}selected{% endif %}>Keys</option>
+                        <option value="Wallets" {% if filters.category == 'Wallets' %}selected{% endif %}>Wallets</option>
+                        <option value="Others" {% if filters.category == 'Others' %}selected{% endif %}>Others</option>
+
+                        <!-- Add more categories -->
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Type</label>
+                    <select name="type" class="form-select">
+                        <option value="">All</option>
+                        <option value="lost" {% if filters.type == 'lost' %}selected{% endif %}>Lost</option>
+                        <option value="found" {% if filters.type == 'found' %}selected{% endif %}>Found</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Date From</label>
+                    <input type="date" name="date_from" class="form-control" value="{{ filters.date_from }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Date To</label>
+                    <input type="date" name="date_to" class="form-control" value="{{ filters.date_to }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="location" class="form-control" value="{{ filters.location|default('') }}" placeholder="Enter Location">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="{{ url_for('admin.manage_posts') }}" class="btn btn-secondary">Clear Filters</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Posts Table -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Item Reports</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Item</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Posted By</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in posts %}
+                        <tr>
+                            <td>{{ post.id }}</td>
+                            <td>{{ post.item_name }}</td>
+                            <td>{{ post.category_name }}</td>
+                            <td>{{ post.type|title }}</td>
+                            <td>{{ post.location }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if post.status == 'active' else 'info' if post.status == 'resolved' else 'warning' if post.status == 'flagged' else 'secondary' }}">
+                                    {{ post.status }}
+                                </span>
+                            </td>
+                            <td>{{ post.user.name }}</td>
+                            <td>{{ post.post_date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('posts.view_post', post_id=post.id) }}"
+                                       class="btn btn-sm btn-info">View</a>
+                                    <a href="{{ url_for('admin.edit_post', post_id=post.id) }}"
+                                       class="btn btn-sm btn-warning">Edit</a>
+                                    <form action="{{ url_for('admin.delete_post', post_id=post.id) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Are you sure you want to delete this post?');"
+                                          class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
