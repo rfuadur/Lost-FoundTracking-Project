@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Reports{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Reports Management</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Reporter</th>
+                            <th>Reported User</th>
+                            <th>Related Item</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in fraud_reports %}
+                        <tr>
+                            <td>{{ report.id }}</td>
+                            <td>{{ report.type }}</td>
+                            <td>{{ report.reporter.name }}</td>
+                            <td>{{ report.reported_user.name }}</td>
+                            <td>
+                                {% if report.post %}
+                                <a href="{{ url_for('posts.view_post', post_id=report.post.id) }}">
+                                    {{ report.post.item_name }}
+                                </a>
+                                {% endif %}
+                            </td>
+                            <td>{{ report.reason }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'warning' if report.status == 'pending' else 'success' if report.status == 'resolved' else 'secondary' if report.status == 'dismissed' else 'danger' }}">
+                                    {{ report.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                        Action
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        {% if report.status == 'pending' %}
+                                        <li>
+                                            <form action="{{ url_for('admin.resolve_fraud_report', report_id=report.id) }}" method="POST">
+                                                <input type="hidden" name="action" value="dismiss">
+                                                <button type="submit" class="dropdown-item">Dismiss</button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form action="{{ url_for('admin.resolve_fraud_report', report_id=report.id) }}" method="POST">
+                                                <input type="hidden" name="action" value="ban_user">
+                                                <button type="submit" class="dropdown-item">Ban User</button>
+                                            </form>
+                                        </li>
+                                        {% else %}
+                                        <li>
+                                            <form action="{{ url_for('admin.resolve_fraud_report', report_id=report.id) }}" method="POST">
+                                                <input type="hidden" name="action" value="undo">
+                                                <button type="submit" class="dropdown-item">Undo Action</button>
+                                            </form>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

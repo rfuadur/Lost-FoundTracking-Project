@@ -15,20 +15,48 @@
                         <i class="fas fa-envelope"></i> {{ user.email }}<br>
                         <i class="fas fa-phone"></i> {{ user.contact_info }}
                     </p>
-                    <a href="{{ url_for('chat.inbox') }}" class="btn btn-outline-primary w-100 position-relative">
+                    <a href="{{ url_for('chat.messages') }}" class="btn btn-outline-primary w-100 position-relative">
                         <i class="fas fa-comments"></i> Messages
+                        {% set unread_chats = user.received_chats|selectattr('is_read', 'equalto', false)|list|length %}
                         {% if unread_chats > 0 %}
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             {{ unread_chats }}
                         </span>
                         {% endif %}
                     </a>
-                    <a href="{{ url_for('dashboard.all_claims') }}" class="btn btn-outline-info w-100 mt-2">
-                        <i class="fas fa-clipboard-check"></i> View All Claims
-                        {% if pending_claims_count > 0 %}
-                        <span class="badge bg-danger ms-1">{{ pending_claims_count }}</span>
-                        {% endif %}
+                    {% if user.is_admin %}
+                    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-danger w-100 mt-2">
+                        <i class="fas fa-shield-alt"></i> Admin Panel
                     </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-trophy text-warning"></i> Top Contributors</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for contributor in top_contributors %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="me-2">
+                                    {% if loop.index == 1 %}
+                                        🥇
+                                    {% elif loop.index == 2 %}
+                                        🥈
+                                    {% elif loop.index == 3 %}
+                                        🥉
+                                    {% else %}
+                                        {{ loop.index }}.
+                                    {% endif %}
+                                </span>
+                                {{ contributor.name }}
+                            </div>
+                            <span class="badge bg-success rounded-pill">{{ contributor.contribution }} approvals</span>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

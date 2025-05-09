@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Admin Control Panel</h2>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <h2>{{ stats.total_users }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Active Users</h5>
+                    <h2>{{ stats.active_users }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Reports</h5>
+                    <h2>{{ stats.pending_reports }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Posts</h5>
+                    <h2>{{ stats.total_posts }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <a href="{{ url_for('admin.manage_users') }}" class="btn btn-primary btn-lg w-100">
+                <i class="fas fa-users"></i> Manage Users
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('admin.manage_posts') }}" class="btn btn-info btn-lg w-100">
+                <i class="fas fa-clipboard-list"></i> Manage Posts
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('admin.manage_reports') }}" class="btn btn-warning btn-lg w-100">
+                <i class="fas fa-flag"></i> Manage Reports
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
