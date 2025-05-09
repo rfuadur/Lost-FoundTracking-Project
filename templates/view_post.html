@@ -25,6 +25,9 @@
                         </button>
                     </div>
                     {% endif %}
+                    {% if not is_owner and session.user_id %}
+                    <!--Report User Button-->
+                    {% endif %}
                 </div>
 
                 <div class="card-body">
@@ -90,6 +93,30 @@
                         {% endif %}
                     </div>
 
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2">Share This Post</h5>
+                        <div class="d-flex gap-2 mt-3">
+                            <a href="{{ url_for('posts.share_post', post_id=post.id, platform='facebook') }}"
+                               class="btn btn-primary" target="_blank">
+                                <i class="fab fa-facebook-f"></i> Share
+                            </a>
+                            <a href="{{ url_for('posts.share_post', post_id=post.id, platform='twitter') }}"
+                               class="btn btn-info text-white" target="_blank">
+                                <i class="fab fa-twitter"></i> Tweet
+                            </a>
+                            <a href="{{ url_for('posts.share_post', post_id=post.id, platform='whatsapp') }}"
+                               class="btn btn-success" target="_blank">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </a>
+                            <a href="{{ url_for('posts.share_post', post_id=post.id, platform='telegram') }}"
+                               class="btn btn-info" target="_blank">
+                                <i class="fab fa-telegram"></i> Telegram
+                            </a>
+                        </div>
+                        <p class="text-muted mt-2">
+                            <small><i class="fas fa-share-alt"></i> Shared {{ post.share_count }} times</small>
+                        </p>
+                    </div>
 
                     {% if is_owner and post.type == 'found' %}
                     <div class="mb-4">
