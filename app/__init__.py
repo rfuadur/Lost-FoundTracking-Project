@@ -52,6 +52,7 @@ def inject_common_data():
         'unread_chats': unread_chats
     }
 
+
 # Add root route handler
 @app.route('/')
 def index():
@@ -64,7 +65,7 @@ from app.controllers.auth import auth_bp
 from app.controllers.posts import posts_bp
 from app.controllers.dashboard import dashboard_bp
 from app.controllers.verification import verification_bp
-# from app.controllers.admin import admin_bp
+from app.controllers.admin import admin_bp
 from app.controllers.chat import chat_bp
 from app.controllers.reports import reports_bp
 
@@ -73,7 +74,7 @@ app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(posts_bp, url_prefix='/posts')
 app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
 app.register_blueprint(verification_bp, url_prefix='/verification')
-# app.register_blueprint(admin_bp, url_prefix='/admin')
+app.register_blueprint(admin_bp, url_prefix='/admin')
 app.register_blueprint(chat_bp, url_prefix='/chat')
 app.register_blueprint(reports_bp, url_prefix='/reports')
 
