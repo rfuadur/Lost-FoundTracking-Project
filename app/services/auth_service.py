@@ -8,7 +8,7 @@ class AuthService:
 
     def register(self, name, email, password, contact_info=None):
         if self.user_repository.get_by_email(email):
-            raise ValueError("Email already registered")
+            raise ValueError("Email already registered, try different email")
 
         return self.user_repository.create(name, email, password, contact_info)
 
