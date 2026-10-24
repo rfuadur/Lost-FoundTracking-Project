@@ -1,8 +1,12 @@
+import logging
+import requests
 from flask import session, current_app, url_for
-from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.repositories.user_repository import UserRepository
+
+# Mailjet's HTTPS Send API (Render's free tier blocks outbound SMTP ports)
+MAILJET_SEND_URL = "https://api.mailjet.com/v3.1/send"
 
 class AuthService:
     def __init__(self):
@@ -54,22 +58,37 @@ class AuthService:
 
         token = self.generate_reset_token(email)
         link = url_for("auth.reset_password", token=token, _external=True)
-        
-        msg = Message("Password Reset Request",
-                      recipients=[user.email])
-        msg.body = f"To reset your password, visit the following link: {link}"
-        
-        # Local import to avoid circular dependency
-        from app import mail
-        
+
+        api_key = current_app.config.get("MAILJET_API_KEY")
+        secret_key = current_app.config.get("MAILJET_SECRET_KEY")
+        sender = current_app.config.get("MAIL_SENDER")
+        if not (api_key and secret_key and sender):
+            logging.warning("Mailjet is not configured; password reset email not sent.")
+            # Fallback for local development without Mailjet credentials
+            if current_app.debug:
+                logging.warning(f"DEV MODE: Password Reset Link: {link}")
+            return False
+
+        payload = {
+            "Messages": [{
+                "From": {"Email": sender, "Name": current_app.config["MAIL_SENDER_NAME"]},
+                "To": [{"Email": user.email, "Name": user.name}],
+                "Subject": "Password Reset Request",
+                "TextPart": (
+                    f"To reset your password, visit the following link: {link}\n\n"
+                    "This link expires in 1 hour. If you didn't request a reset, you can ignore this email."
+                ),
+            }]
+        }
+
         try:
-            mail.send(msg)
+            response = requests.post(MAILJET_SEND_URL, auth=(api_key, secret_key), json=payload, timeout=10)
+            response.raise_for_status()
             return True
-        except Exception as e:
-            print(f"Error sending email: {e}")
-            # Fallback for development without email server
-            print(f"DEV MODE: Password Reset Link: {link}")
-            return True
+        except requests.RequestException as e:
+            detail = e.response.text if e.response is not None else e
+            logging.error(f"Error sending password reset email via Mailjet: {detail}")
+            return False
 
     def reset_password(self, token, new_password):
         email = self.verify_reset_token(token)

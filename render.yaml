@@ -12,15 +12,9 @@ services:
         generateValue: true
       - key: GOOGLE_API_KEY
         sync: false
-      - key: MAIL_SERVER
-        value: smtp.gmail.com
-      - key: MAIL_PORT
-        value: 587
-      - key: MAIL_USE_TLS
-        value: true
-      - key: MAIL_USERNAME
+      - key: MAILJET_API_KEY
         sync: false
-      - key: MAIL_PASSWORD
+      - key: MAILJET_SECRET_KEY
         sync: false
-      - key: MAIL_DEFAULT_SENDER
+      - key: MAIL_SENDER
         sync: false
