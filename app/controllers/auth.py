@@ -44,6 +44,49 @@ def register():
             flash(str(e), "danger")
     return render_template("register.html")
 
+@auth_bp.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if "user_id" in session:
+        return redirect(url_for("dashboard.dashboard"))
+        
+    if request.method == "POST":
+        email = request.form.get("email")
+        # Always flash the same message for security, whether email exists or not
+        auth_service.send_reset_email(email)
+        flash("If an account with that email exists, a password reset link has been sent.", "info")
+        return redirect(url_for("auth.login"))
+        
+    return render_template("forgot_password.html")
+
+@auth_bp.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    if "user_id" in session:
+        return redirect(url_for("dashboard.dashboard"))
+        
+    # Verify token validity first
+    email = auth_service.verify_reset_token(token)
+    if not email:
+        flash("That is an invalid or expired token", "warning")
+        return redirect(url_for("auth.forgot_password"))
+
+    if request.method == "POST":
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+        
+        if password != confirm_password:
+            flash("Passwords do not match", "danger")
+            return render_template("reset_password.html", token=token)
+            
+        try:
+            auth_service.reset_password(token, password)
+            flash("Your password has been updated! You can now log in.", "success")
+            return redirect(url_for("auth.login"))
+        except ValueError as e:
+            flash(str(e), "danger")
+            return redirect(url_for("auth.login"))
+            
+    return render_template("reset_password.html", token=token)
+
 @auth_bp.route("/logout")
 @login_required
 def logout():

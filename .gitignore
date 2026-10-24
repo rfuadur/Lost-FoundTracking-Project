@@ -24,3 +24,5 @@ embedding_cache
 static/uploads/
 __pycache__/
 *.pyc
+.venv
+.mcp.json

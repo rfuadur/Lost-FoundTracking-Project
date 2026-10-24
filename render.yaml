@@ -2,6 +2,7 @@ services:
   - type: web
     name: lost-found-tracking
     env: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: flask db upgrade && gunicorn --worker-class eventlet -w 1 run:app
     envVars:
@@ -10,4 +11,16 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: GOOGLE_API_KEY
+        sync: false
+      - key: MAIL_SERVER
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: 587
+      - key: MAIL_USE_TLS
+        value: true
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_DEFAULT_SENDER
         sync: false
