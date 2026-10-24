@@ -1,1 +1,1 @@
-web: flask db upgrade && gunicorn --worker-class eventlet -w 1 run:app
+web: flask db upgrade && gunicorn --worker-class gthread -w 1 --threads 100 run:app

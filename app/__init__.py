@@ -41,7 +41,7 @@ app.config['MAIL_SENDER_NAME'] = os.environ.get('MAIL_SENDER_NAME', 'Lost & Foun
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-socketio = SocketIO(app, async_mode='eventlet')
+socketio = SocketIO(app, async_mode='threading')
 csrf = CSRFProtect(app)
 
 # Ensure uploads directory exists

@@ -1,6 +1,3 @@
-import eventlet
-eventlet.monkey_patch()
-
 import os
 from app import app, db, socketio
 from app.models.user import User
@@ -46,4 +43,5 @@ if __name__ == "__main__":
         db.create_all()
         create_default_users()
     debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
-    socketio.run(app, host="0.0.0.0", port=5000, debug=debug_mode)
+    # Local development server only; production runs under gunicorn (see render.yaml)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=debug_mode, allow_unsafe_werkzeug=True)
