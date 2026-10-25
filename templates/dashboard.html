@@ -29,6 +29,9 @@
                         <span class="badge bg-danger ms-1">{{ pending_claims_count }}</span>
                         {% endif %}
                     </a>
+                    <a href="{{ url_for('dashboard.account') }}" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="fas fa-user-cog"></i> Account Settings
+                    </a>
                     {% if user.is_admin %}
                     <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-danger w-100 mt-2">
                         <i class="fas fa-shield-alt"></i> Admin Panel

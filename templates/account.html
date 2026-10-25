@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Account Settings{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="mb-4"><i class="fas fa-user-cog"></i> Account Settings</h3>
+    <div class="row">
+        <!-- Account Details -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-id-card text-primary"></i> Account Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-user-circle fa-4x text-primary mb-2"></i>
+                        <h5 class="mb-1">{{ user.name }}</h5>
+                        {% if user.is_admin %}
+                        <span class="badge bg-danger"><i class="fas fa-shield-alt"></i> Admin</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Member</span>
+                        {% endif %}
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted"><i class="fas fa-envelope"></i> Email</span>
+                            <span>{{ user.email }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted"><i class="fas fa-phone"></i> Contact</span>
+                            <span>{{ user.contact_info or 'Not provided' }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted"><i class="fas fa-clipboard-list"></i> Posts</span>
+                            <span>{{ stats.total_posts }} ({{ stats.lost_items }} lost, {{ stats.found_items }} found)</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted"><i class="fas fa-trophy"></i> Contributions</span>
+                            <span class="badge bg-success rounded-pill align-self-center">{{ user.contribution or 0 }} approvals</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password -->
+        <div class="col-md-7 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-key text-warning"></i> Change Password</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('auth.change_password') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">Current Password:</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password"
+                                autocomplete="current-password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label">New Password:</label>
+                            <input type="password" class="form-control" id="new_password" name="new_password"
+                                autocomplete="new-password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirm New Password:</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                                autocomplete="new-password" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Change Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

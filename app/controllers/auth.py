@@ -87,6 +87,25 @@ def reset_password(token):
             
     return render_template("reset_password.html", token=token)
 
+@auth_bp.route("/change-password", methods=["POST"])
+@login_required
+def change_password():
+    new_password = request.form.get("new_password")
+    if new_password != request.form.get("confirm_password"):
+        flash("New passwords do not match", "danger")
+        return redirect(url_for("dashboard.account"))
+
+    try:
+        auth_service.change_password(
+            session["user_id"],
+            request.form.get("current_password"),
+            new_password
+        )
+        flash("Your password has been changed.", "success")
+    except ValueError as e:
+        flash(str(e), "danger")
+    return redirect(url_for("dashboard.account"))
+
 @auth_bp.route("/logout")
 @login_required
 def logout():

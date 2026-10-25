@@ -35,6 +35,14 @@ def dashboard():
     )
 
 
+@dashboard_bp.route("/account")
+@login_required
+def account():
+    current_user = user_service.get_by_id(session['user_id'])
+    stats = post_service.get_user_stats(session['user_id'])
+    return render_template("account.html", user=current_user, stats=stats)
+
+
 @dashboard_bp.route("/notifications/mark-read/<int:notification_id>")
 @login_required
 def mark_notification_read(notification_id):

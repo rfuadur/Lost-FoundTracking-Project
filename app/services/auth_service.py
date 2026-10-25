@@ -90,6 +90,21 @@ class AuthService:
             logging.error(f"Error sending password reset email via Mailjet: {detail}")
             return False
 
+    def change_password(self, user_id, current_password, new_password):
+        user = self.user_repository.get_by_id(user_id)
+        if not user:
+            raise ValueError("User not found")
+        if not check_password_hash(user.password, current_password or ""):
+            raise ValueError("Current password is incorrect")
+        if not new_password:
+            raise ValueError("New password cannot be empty")
+        if check_password_hash(user.password, new_password):
+            raise ValueError("New password must be different from your current password")
+
+        user.password = generate_password_hash(new_password)
+        self.user_repository.update(user)
+        return user
+
     def reset_password(self, token, new_password):
         email = self.verify_reset_token(token)
         if not email:
